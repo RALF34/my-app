@@ -14,7 +14,7 @@ OVERSEAS_DEPARTMENTS = [
 
 
 def get_stations() -> List[str]:
-    f = open("distribution_pollutants.pickle", "rb")
+    f = open(r"data/distribution_pollutants.pickle", "rb")
     data = pickle.load(f)
     return list(data.groups.keys())
 
@@ -26,12 +26,13 @@ def get_data(s: str, p: str) -> List[pd.DataFrame]:
     '''
     result = []
     for name in ["working_days","weekends"]:
-        f = open(name+".pickle", "rb")
+        f = open(r"data/"+f"{name}.pickle", "rb")
         data = pickle.load(f)
         try:
             result.append(data.get_group((s,p)))
         except:
             result.append(None)
+        f.close()
     return result
 
 def get_items(
@@ -47,7 +48,7 @@ def get_items(
     group_name -- name of the group whose data we want to extract.
     '''
     
-    f = open(file_name+".pickle", "rb")
+    f = open(r"data/"+f"{file_name}.pickle", "rb")
     data = pickle.load(f)
 
     if file_name == "regions" and not(group_name):
