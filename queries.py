@@ -26,7 +26,7 @@ def get_data(s: str, p: str) -> List[pd.DataFrame]:
     '''
     result = []
     for name in ["working_days","weekends"]:
-        f = open(r"data/"+f"{name}.pickle", "rb")
+        f = open(f"data/{name}.pickle", "rb")
         data = pickle.load(f)
         try:
             result.append(data.get_group((s,p)))
@@ -48,7 +48,7 @@ def get_items(
     group_name -- name of the group whose data we want to extract.
     '''
     
-    f = open(r"data/"+f"{file_name}.pickle", "rb")
+    f = open(f"data/{file_name}.pickle", "rb")
     data = pickle.load(f)
 
     if file_name == "regions" and not(group_name):

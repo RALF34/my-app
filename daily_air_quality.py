@@ -13,13 +13,13 @@ def main():
             ### Select a place in France
             Identify the air quality monitoring station whose pollution data you are interested in.
             ''')
-    st.session_state["current_data"] = None
+    st.session_state["current_data"] = []
+    st.session_state["start"] = 90
     st.session_state["y-values"] = [None, None]
     st.session_state["first_choice"] = True
     st.session_state["no_data"] = True
 
-    def update_values(initialize: bool = False) -> None:
-        start = 90 if initialize else st.session_state["start"]
+    def update_values() -> None:
         counter = 0
         for i, data in enumerate(st.session_state["current_data"]):
             if data:
@@ -35,7 +35,7 @@ def main():
                     limit = len(history)
                     while (
                         j < limit and 
-                        (start <= history[j][1])):
+                        (st.session_state["start"] <= history[j][1])):
                         j += 1
                     if j == limit:
                         j -= 1
@@ -90,13 +90,16 @@ def main():
                 data = queries.get_data(station, pollutant)
                 st.session_state["current_data"] = [
                     e.groupby("hour") for e in data]
-                update_values(initialize=True)
+                update_values()
                 
                 if st.session_state["no_data"]:
                     st.error("No pollution data are available for the given period.")
                     st.stop()
                 else:
-                    ending_date = date.fromisoformat("2024-04-30")
+                    last_update = open(
+                        r"data/last_update.txt","r").read()
+                    ending_date = \
+                    date.fromisoformat(last_update)-timedelta(days=1)
                     start = st.slider(
                         "When does the air pollution analysis start?",
                         ending_date-timedelta(days=180),
@@ -111,7 +114,8 @@ def main():
                             pollutant,
                             station))
         
-        except:
+        except Exception as e:
+            st.error(e)
             st.stop()
 
 if __name__=="__main__":
